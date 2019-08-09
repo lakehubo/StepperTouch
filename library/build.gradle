@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.diffplug.gradle.spotless"
+apply plugin: 'kotlin-android-extensions'
+
+group = "com.github.DanielMartinus"
+
+repositories {
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError true
+        baseline file("lint-baseline.xml")
+    }
+}
+
+spotless {
+    kotlin {
+        ktlint("0.29.0")
+        target "**/*.kt"
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md'
+            include '**/*.gitignore'
+            include '**/*.xml'
+            exclude '**/.gradle/**'
+            exclude '**/build/**'
+            exclude '.idea/**'
+        }
+
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+    api "androidx.constraintlayout:constraintlayout:1.1.3"
+}
