@@ -1,10 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: "com.diffplug.gradle.spotless"
-apply plugin: 'kotlin-android-extensions'
-
-group = "com.github.DanielMartinus"
 
 repositories {
     mavenCentral()
@@ -32,30 +26,9 @@ android {
     }
 }
 
-spotless {
-    kotlin {
-        ktlint("0.29.0")
-        target "**/*.kt"
-        endWithNewline()
-    }
-    format 'misc', {
-        target fileTree('.') {
-            include '**/*.md'
-            include '**/*.gitignore'
-            include '**/*.xml'
-            exclude '**/.gradle/**'
-            exclude '**/build/**'
-            exclude '.idea/**'
-        }
-
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        endWithNewline()
-    }
-}
-
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
-    api "androidx.constraintlayout:constraintlayout:1.1.3"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:support-dynamic-animation:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
 }
