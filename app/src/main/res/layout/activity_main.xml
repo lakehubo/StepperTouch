@@ -5,24 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffa200"
-    android:orientation="vertical"
     tools:context="nl.dionsegijn.steppertouchdemo.MainActivity">
 
-    <nl.dionsegijn.steppertouch.WaterViewLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<nl.dionsegijn.steppertouch.WaterViewLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
-        <nl.dionsegijn.steppertouch.StepperTouchView
-            android:id="@+id/stepperTouch"
-            android:layout_width="120dp"
-            android:layout_height="275dp"
-            android:layout_gravity="center"
-            android:clipChildren="true"
-            android:orientation="vertical"
-            app:stepperOrientation="vertical"
-            app:stepperSingle="true" />
-    </nl.dionsegijn.steppertouch.WaterViewLayout>
+        <!--<nl.dionsegijn.steppertouch.StepperTouchView-->
+            <!--android:id="@+id/stepperTouch"-->
+            <!--android:layout_width="120dp"-->
+            <!--android:layout_height="275dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:clipChildren="true"-->
+            <!--android:orientation="vertical"-->
+            <!--app:stepperOrientation="vertical"-->
+            <!--app:stepperSingle="true" />-->
+    <!--</nl.dionsegijn.steppertouch.WaterViewLayout>-->
 
+    <nl.dionsegijn.steppertouch.WindSpeedGroupView
+        android:layout_gravity="center"
+        android:layout_width="120dp"
+        android:layout_height="400dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
