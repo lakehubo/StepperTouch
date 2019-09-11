@@ -13,6 +13,15 @@
         <attr name="stepperSingle" format="boolean">
         </attr>
     </declare-styleable>
+    <declare-styleable name="PopProgressView">
+        <attr name="styleType">
+            <enum name="mid" value="0" />
+            <enum name="normal" value="1" />
+        </attr>
+        <attr name="style_unit" format="string"/>
+        <attr name="max_values" format="integer"/>
+        <attr name="unit_values" format="integer"/>
+    </declare-styleable>
     <declare-styleable name="WindSpeedGroupView">
         <attr name="groupDividerWidth" format="integer"/>
         <attr name="groupSize">

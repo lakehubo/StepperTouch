@@ -9,7 +9,9 @@
     tools:context="nl.dionsegijn.steppertouchdemo.MainActivity">
 
     <nl.dionsegijn.steppertouch.ButtonPopProgressView
+        android:background="@android:color/holo_blue_light"
         android:layout_gravity="center"
+        app:styleType="mid"
         android:layout_width="match_parent"
         android:layout_height="100dp" />
 
