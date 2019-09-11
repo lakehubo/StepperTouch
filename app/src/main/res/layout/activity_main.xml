@@ -5,26 +5,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#eeeeee"
     tools:context="nl.dionsegijn.steppertouchdemo.MainActivity">
 
-    <!--<nl.dionsegijn.steppertouch.WaterViewLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <nl.dionsegijn.steppertouch.ShaderBtnView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="left"
+        app:btnType="oval"
+        app:radius="4dp"
+        app:text="自定义" />
 
-        <!--<nl.dionsegijn.steppertouch.StepperTouchView-->
-            <!--android:id="@+id/stepperTouch"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="275dp"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:clipChildren="true"-->
-            <!--android:orientation="vertical"-->
-            <!--app:stepperOrientation="vertical"-->
-            <!--app:stepperSingle="true" />-->
-    <!--</nl.dionsegijn.steppertouch.WaterViewLayout>-->
+    <nl.dionsegijn.steppertouch.ShaderBtnView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="right"
+        app:btnType="oval"
+        app:imgHeight="20dp"
+        app:imgSrc="@mipmap/icon_devicecontrol_curtain_power"
+        app:imgSrc_press="@mipmap/icon_devicecontrol_curtain_power_white"
+        app:imgWidth="20dp"
+        app:radius="4dp" />
 
-    <nl.dionsegijn.steppertouch.WindSpeedGroupView
+
+    <nl.dionsegijn.steppertouch.ShaderBtnView
+        android:id="@+id/shadowbtn"
+        android:layout_width="200dp"
         android:layout_gravity="center"
-        android:layout_width="120dp"
-        android:layout_height="400dp" />
+        android:layout_height="80dp"
+        app:btnType="rectangle"
+        app:corner="4dp"
+        app:radius="@dimen/dp_4"
+        app:shadowColor="#1a000000"
+        app:shadowDx="0"
+        app:shadowDy="6"
+        app:shadowLeft="0dp"
+        app:shadowRight="0dp"
+        app:text="测试"
+        app:textColor="@color/colorAccent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
