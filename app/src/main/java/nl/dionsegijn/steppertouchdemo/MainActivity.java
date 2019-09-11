@@ -3,6 +3,7 @@ package nl.dionsegijn.steppertouchdemo;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import nl.dionsegijn.steppertouch.ButtonPopProgressView;
 import nl.dionsegijn.steppertouch.ShaderBtnView;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch_view);
+        ((ButtonPopProgressView)findViewById(R.id.pop_progress)).setValue(450);
 //        btn = findViewById(R.id.shadowbtn);
 //
 //        btn.setOnClickListener(new View.OnClickListener() {

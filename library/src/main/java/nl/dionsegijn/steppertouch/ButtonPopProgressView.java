@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +32,6 @@ public class ButtonPopProgressView extends View {
     private RectF imgRectF = new RectF();
     private RectF btnImgRectF = new RectF();
     private float lineWidth;
-    private float progress = 100f;
     private Bitmap popImg;
     private Bitmap btnImg;
     private float padding;
@@ -47,7 +46,14 @@ public class ButtonPopProgressView extends View {
     private int STYLE_TYPE = TYPE_MID; //TYPE_MID 中分模式 TYPE_NORMAL 正常模式
     private String unitStr = "%";//显示的单位字符
     private int MAX_VALUES = 100;//最大值
-    private int UNIT_V = 1;//单位长度
+    private float UNIT_V = 1;//单位长度
+    private float PROGRESS = (float) MAX_VALUES / UNIT_V;//总分数
+
+    private float progress = 0;//当前进度
+    private OnProgressChangedListener onProgressChangedListener;
+
+    private float popTextSize = getResources().getDimension(R.dimen.sp_18);
+    private float btnTextSize = getResources().getDimension(R.dimen.sp_14);
 
     public ButtonPopProgressView(Context context) {
         this(context, null);
@@ -67,10 +73,17 @@ public class ButtonPopProgressView extends View {
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PopProgressView, defStyleAttr, 0);
         try {
             if (attributes != null) {
+                popTextSize = attributes.getDimension(R.styleable.PopProgressView_pop_text_size, getResources().getDimension(R.dimen.sp_18));
+                btnTextSize = attributes.getDimension(R.styleable.PopProgressView_btn_text_size, getResources().getDimension(R.dimen.sp_14));
                 STYLE_TYPE = attributes.getInteger(R.styleable.PopProgressView_styleType, TYPE_MID);
                 unitStr = attributes.getString(R.styleable.PopProgressView_style_unit);
+                if (TextUtils.isEmpty(unitStr))
+                    unitStr = "%";
                 MAX_VALUES = attributes.getInteger(R.styleable.PopProgressView_max_values, 100);
-                UNIT_V = attributes.getInteger(R.styleable.PopProgressView_unit_values, 1);
+                UNIT_V = attributes.getFloat(R.styleable.PopProgressView_unit_values, 1f);
+                PROGRESS = (float) MAX_VALUES / UNIT_V;
+                if (STYLE_TYPE == TYPE_MID)
+                    progress = PROGRESS / 2;
             }
         } finally {
             if (attributes != null) {
@@ -88,15 +101,14 @@ public class ButtonPopProgressView extends View {
         popH = getResources().getDimension(R.dimen.dp_50);
         padding = getResources().getDimension(R.dimen.dp_16);
 
-
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(getResources().getDimension(R.dimen.sp_18));
+        textPaint.setTextSize(popTextSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
         btnTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         btnTextPaint.setColor(Color.BLACK);
-        btnTextPaint.setTextSize(getResources().getDimension(R.dimen.sp_14));
+        btnTextPaint.setTextSize(btnTextSize);
         btnTextPaint.setTextAlign(Paint.Align.CENTER);
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -138,7 +150,7 @@ public class ButtonPopProgressView extends View {
         lineRectF.bottom = h - btnH / 2 - padding;
         lineRectF.top = lineRectF.bottom - lineWidth;
 
-        distance = lineRectF.width() / 100f;
+        distance = lineRectF.width() / PROGRESS;//一个distanc对应一个unit_v
 
         Rect mBounds = new Rect();
         btnTextPaint.getTextBounds("0", 0, "0".length(), mBounds);
@@ -153,7 +165,7 @@ public class ButtonPopProgressView extends View {
      * @param progress
      */
     public void updateSize(float progress) {
-        float position = progress - 50;
+        float position = progress - PROGRESS / 2;
 
         float progressDis = distance * position;
 
@@ -213,20 +225,23 @@ public class ButtonPopProgressView extends View {
         canvas.drawRoundRect(colorRectF, lineWidth / 2, lineWidth / 2, colorPaint);
 
         canvas.drawRoundRect(btnRectF, lineWidth / 2, lineWidth / 2, btnPaint);
-        String pro = "";
+        float pro = 0;
         if (STYLE_TYPE == TYPE_MID)
-            pro = String.format("%.1f", (progress - 50) / 50 * 20) + "%";
+            pro = (Math.round(progress - PROGRESS / 2)) * UNIT_V;
         if (STYLE_TYPE == TYPE_NORMAL)
-            pro = (int) (progress / 100 * 100) + "%";
+            pro = Math.round(progress) * UNIT_V;
         if (canScroll) {
             canvas.drawBitmap(popImg, null, imgRectF, imgPaint);
-            canvas.drawText(pro, imgRectF.centerX(), imgRectF.centerY() + 4, textPaint);
+            canvas.drawText((pro > 0 && STYLE_TYPE == TYPE_MID ? "+" : "") + pro + unitStr
+                    , imgRectF.centerX(), imgRectF.centerY() + 4, textPaint);
             canvas.drawBitmap(btnImg, null, btnImgRectF, imgPaint);
         } else {
-            canvas.drawText(pro, btnRectF.centerX(), btnRectF.centerY() + btnTextHeight / 2, btnTextPaint);
+            canvas.drawText((pro > 0 && STYLE_TYPE == TYPE_MID ? "+" : "") + pro + unitStr
+                    , btnRectF.centerX(), btnRectF.centerY() + btnTextHeight / 2, btnTextPaint);
         }
+        if (onProgressChangedListener != null)
+            onProgressChangedListener.onValueChanged(pro);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -247,8 +262,8 @@ public class ButtonPopProgressView extends View {
                     float p = progress + transX / distance;
                     if (p < 0)
                         p = 0;
-                    if (p > 100)
-                        p = 100;
+                    if (p > PROGRESS)
+                        p = PROGRESS;
                     progress = p;
                     updateProgress(progress);
                     last.x = x;
@@ -281,5 +296,34 @@ public class ButtonPopProgressView extends View {
         }
         lastPassedEventTime = current;
         return true;
+    }
+
+    public void setValue(float value) {
+        switch (STYLE_TYPE) {
+            case TYPE_MID:
+                if (value > MAX_VALUES / 2)
+                    progress = PROGRESS;
+                else if (value < -MAX_VALUES / 2)
+                    progress = 0;
+                else progress = PROGRESS / 2 + value / UNIT_V;
+                break;
+            case TYPE_NORMAL:
+                if (value < 0)
+                    progress = 0;
+                else if (value > MAX_VALUES)
+                    progress = PROGRESS;
+                else progress = value / UNIT_V;
+                break;
+        }
+        updateProgress(progress);
+        invalidate();
+    }
+
+    public interface OnProgressChangedListener {
+        void onValueChanged(float value);
+    }
+
+    public void setOnProgressChangedListener(OnProgressChangedListener onProgressChangedListener) {
+        this.onProgressChangedListener = onProgressChangedListener;
     }
 }
